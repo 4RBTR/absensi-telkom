@@ -3,20 +3,17 @@ import type { Config } from 'tailwindcss'
 import forms from '@tailwindcss/forms'
 
 const config: Config = {
+    // INI BAGIAN YANG DIPERBAIKI
     content: [
-        './pages/**/*.{js,ts,jsx,tsx,mdx}',
-        './components/**/*.{js,ts,jsx,tsx,mdx}',
-        './app/**/*.{js,ts,jsx,tsx,mdx}',
+        './app/components/**/*.{js,ts,jsx,tsx,mdx}', // Menemukan AttendanceClient.tsx
+        './app/**/*.{js,ts,jsx,tsx,mdx}', // Menemukan page.tsx dan layout.tsx
     ],
+    // -------------------------
     theme: {
         extend: {
             colors: {
-                // Tema Telkom
                 'telkom-red': '#E60012',
                 'telkom-dark': '#212121',
-
-                // Perubahan palsu untuk paksa clear cache Vercel
-                'dummy-color': '#123456',
             },
         },
     },
