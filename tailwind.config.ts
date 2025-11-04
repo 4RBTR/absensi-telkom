@@ -3,12 +3,16 @@ import type { Config } from 'tailwindcss'
 import forms from '@tailwindcss/forms'
 
 const config: Config = {
-    // INI BAGIAN YANG DIPERBAIKI
+    // ---------------------------------------------
+    // INI ADALAH BAGIAN YANG DIPERBAIKI (FINAL)
+    // Kita beritahu Tailwind secara spesifik file mana yang harus dibaca
     content: [
-        './app/components/**/*.{js,ts,jsx,tsx,mdx}', // Menemukan AttendanceClient.tsx
-        './app/**/*.{js,ts,jsx,tsx,mdx}', // Menemukan page.tsx dan layout.tsx
+        './app/layout.tsx',
+        './app/page.tsx',
+        './app/components/AttendanceClient.tsx',
     ],
-    // -------------------------
+    // ---------------------------------------------
+
     theme: {
         extend: {
             colors: {
