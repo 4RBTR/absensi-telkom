@@ -1,6 +1,6 @@
 // File: tailwind.config.ts
 import type { Config } from 'tailwindcss'
-import forms from '@tailwindcss/forms' // <-- 1. IMPORT DI SINI
+import forms from '@tailwindcss/forms'
 
 const config: Config = {
     content: [
@@ -14,11 +14,14 @@ const config: Config = {
                 // Tema Telkom
                 'telkom-red': '#E60012',
                 'telkom-dark': '#212121',
+
+                // Perubahan palsu untuk paksa clear cache Vercel
+                'dummy-color': '#123456',
             },
         },
     },
     plugins: [
-        forms, // <-- 2. GUNAKAN DI SINI
+        forms,
     ],
 }
 export default config
