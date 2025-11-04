@@ -1,8 +1,4 @@
+/* File: app/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Atur latar belakang dasar ke mode gelap */
-body {
-  @apply bg-gray-900 text-white;
-}
