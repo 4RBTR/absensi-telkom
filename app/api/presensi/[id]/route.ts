@@ -1,14 +1,14 @@
 // File: app/api/presensi/[id]/route.ts
-// INI ADALAH KODE YANG SUDAH DIPERBAIKI
+// INI ADALAH KODE YANG SUDAH DIPERBAIKI (FINAL)
 import { NextRequest, NextResponse } from 'next/server'
 import { hapusRiwayat } from '@/app/lib/kv-store'
 
 export async function DELETE(
-    request: NextRequest, // Ini sudah benar
-    context: { params: { id: string } } // Ini sudah benar
+    request: NextRequest,
+    context: { params: Promise<{ id: string }> } // <-- 1. Ini sekarang adalah 'Promise'
 ) {
     try {
-        const id = context.params.id // Ini sudah benar
+        const { id } = await context.params // <-- 2. Kita harus 'await' untuk dapat datanya
 
         const sukses = await hapusRiwayat(id)
 
