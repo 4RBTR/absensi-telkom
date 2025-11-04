@@ -3,16 +3,11 @@ import type { Config } from 'tailwindcss'
 import forms from '@tailwindcss/forms'
 
 const config: Config = {
-    // ---------------------------------------------
-    // INI ADALAH BAGIAN YANG DIPERBAIKI (FINAL)
-    // Kita beritahu Tailwind secara spesifik file mana yang harus dibaca
+    // INI ADALAH PERBAIKAN UNTUK TAMPILAN
     content: [
-        './app/layout.tsx',
-        './app/page.tsx',
-        './app/components/AttendanceClient.tsx',
+        './app/**/*.{js,ts,jsx,tsx,mdx}', // Ini akan membaca SEMUA file di dalam folder 'app'
     ],
-    // ---------------------------------------------
-
+    // ---------------------------------
     theme: {
         extend: {
             colors: {

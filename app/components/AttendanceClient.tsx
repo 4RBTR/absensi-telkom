@@ -1,19 +1,38 @@
 // File: app/components/AttendanceClient.tsx
-'use client' // Tandai sebagai Client Component
+'use client'
 
-import { useState, useEffect, FormEvent } from 'react'
-// Impor tipe data Presensi
-import type { Presensi } from '@/app/lib/kv-store'
+import { useState, FormEvent } from 'react'
 
-// Komponen untuk ikon (menggunakan SVG)
+// Tipe data untuk Presensi
+export interface Presensi {
+    id: string
+    nama: string
+    waktu: string
+}
+
+// Data awal (dummy)
+const dataAwal: Presensi[] = [
+    {
+        id: '1',
+        nama: 'Budi Santoso (Contoh)',
+        waktu: new Date('2025-11-04T08:00:00Z').toISOString(),
+    },
+    {
+        id: '2',
+        nama: 'Ani Yuliani (Contoh)',
+        waktu: new Date('2025-11-04T08:01:00Z').toISOString(),
+    },
+]
+
+// --- Komponen Ikon (masih sama) ---
 const IconCheck = () => (
     <svg
-        xmlns="http://www.w3.org/2000/svg"
+        xmlns="http://www.w.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="w-5 h-5 mr-2"
+        className="w-5 h-5 mr-2" // <-- Styling ini akan berfungsi sekarang
     >
         <path
             strokeLinecap="round"
@@ -25,12 +44,12 @@ const IconCheck = () => (
 
 const IconTrash = () => (
     <svg
-        xmlns="http://www.w3.org/2000/svg"
+        xmlns="http://www.w.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="w-5 h-5"
+        className="w-5 h-5" // <-- Styling ini akan berfungsi sekarang
     >
         <path
             strokeLinecap="round"
@@ -39,94 +58,45 @@ const IconTrash = () => (
         />
     </svg>
 )
+// -------------------------------------
 
 export default function AttendanceClient() {
-    // State untuk menyimpan nama di form
     const [nama, setNama] = useState('')
-    // State untuk menyimpan daftar riwayat presensi
-    const [riwayat, setRiwayat] = useState<Presensi[]>([])
-    // State untuk loading
-    const [isLoading, setIsLoading] = useState(false)
-    const [isFetching, setIsFetching] = useState(true)
-    // State untuk pesan error
+    // Data riwayat sekarang disimpan di 'state', dimulai dengan data awal
+    const [riwayat, setRiwayat] = useState<Presensi[]>(dataAwal)
     const [error, setError] = useState<string | null>(null)
 
-    // Fungsi untuk mengambil data riwayat dari API
-    const fetchRiwayat = async () => {
-        setIsFetching(true)
-        try {
-            const res = await fetch('/api/presensi') // Panggil API GET
-            if (!res.ok) throw new Error('Gagal memuat data')
-            const data = (await res.json()) as Presensi[]
-            setRiwayat(data)
-        } catch (err) {
-            setError('Gagal mengambil data riwayat.')
-        } finally {
-            setIsFetching(false)
-        }
-    }
-
-    // Ambil data saat komponen pertama kali dimuat
-    useEffect(() => {
-        fetchRiwayat()
-    }, [])
-
-    // Fungsi untuk menangani submit form (Presensi)
+    // Fungsi submit (TANPA API)
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         if (!nama) {
             setError('Nama tidak boleh kosong.')
             return
         }
-
-        setIsLoading(true)
         setError(null)
 
-        try {
-            const res = await fetch('/api/presensi', { // Panggil API POST
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ nama }),
-            })
-
-            if (!res.ok) {
-                throw new Error('Gagal melakukan presensi.')
-            }
-
-            setNama('') // Kosongkan form
-            await fetchRiwayat() // Ambil ulang data riwayat agar update
-        } catch (err) {
-            setError((err as Error).message)
-        } finally {
-            setIsLoading(false)
+        // Buat data baru
+        const dataBaru: Presensi = {
+            id: crypto.randomUUID(), // ID acak
+            nama: nama,
+            waktu: new Date().toISOString(),
         }
+
+        // Tambahkan data baru ke 'state' (data baru di atas)
+        setRiwayat([dataBaru, ...riwayat])
+        setNama('') // Kosongkan form
     }
 
-    // Fungsi untuk menghapus data presensi
+    // Fungsi hapus (TANPA API)
     const handleDelete = async (id: string) => {
-        // Konfirmasi dulu
         if (!confirm('Apakah Anda yakin ingin menghapus riwayat ini?')) {
             return
         }
-
-        try {
-            const res = await fetch(`/api/presensi/${id}`, { // Panggil API DELETE
-                method: 'DELETE',
-            })
-
-            if (!res.ok) {
-                throw new Error('Gagal menghapus data.')
-            }
-
-            await fetchRiwayat() // Ambil ulang data
-        } catch (err) {
-            setError((err as Error).message)
-        }
+        // Filter 'state' untuk menghapus data dengan ID yang cocok
+        setRiwayat(riwayat.filter((p) => p.id !== id))
     }
 
-    // Fungsi untuk memformat tanggal
+    // Fungsi format waktu (masih sama)
     const formatWaktu = (waktuISO: string) => {
         return new Date(waktuISO).toLocaleString('id-ID', {
             dateStyle: 'medium',
@@ -134,6 +104,7 @@ export default function AttendanceClient() {
         })
     }
 
+    // Tampilan (JSX) tidak berubah sama sekali
     return (
         <div className="mt-12">
             {/* Bagian Form Presensi */}
@@ -151,23 +122,15 @@ export default function AttendanceClient() {
                             id="nama"
                             value={nama}
                             onChange={(e) => setNama(e.target.value)}
-                            disabled={isLoading}
-                            className="block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-telkom-red sm:text-sm sm:leading-6 disabled:opacity-50"
+                            className="block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-telkom-red sm:text-sm sm:leading-6"
                             placeholder="Contoh: Budi Santoso"
                         />
                         <button
                             type="submit"
-                            disabled={isLoading}
-                            className="flex items-center justify-center rounded-md bg-telkom-red px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-telkom-red disabled:bg-gray-600 disabled:cursor-not-allowed"
+                            className="flex items-center justify-center rounded-md bg-telkom-red px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-telkom-red"
                         >
-                            {isLoading ? (
-                                'Memproses...'
-                            ) : (
-                                <>
-                                    <IconCheck />
-                                    Catat Kehadiran
-                                </>
-                            )}
+                            <IconCheck />
+                            Catat Kehadiran
                         </button>
                     </div>
                     {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
@@ -178,9 +141,7 @@ export default function AttendanceClient() {
             <div className="mt-12">
                 <h2 className="text-2xl font-semibold mb-4">Riwayat Presensi</h2>
                 <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg overflow-hidden">
-                    {isFetching ? (
-                        <p className="p-6 text-center text-gray-400">Memuat riwayat...</p>
-                    ) : riwayat.length === 0 ? (
+                    {riwayat.length === 0 ? (
                         <p className="p-6 text-center text-gray-400">
                             Belum ada riwayat presensi.
                         </p>
