@@ -1,18 +1,15 @@
 // File: app/api/presensi/[id]/route.ts
-import { NextRequest, NextResponse } from 'next/server' // <-- 1. Impor NextRequest
+// INI ADALAH KODE YANG SUDAH DIPERBAIKI
+import { NextRequest, NextResponse } from 'next/server'
 import { hapusRiwayat } from '@/app/lib/kv-store'
 
-/**
- * FUNGSI DELETE: Dipanggil saat user menekan tombol hapus
- */
 export async function DELETE(
-    request: NextRequest, // <-- 2. Ganti dari 'Request' ke 'NextRequest'
-    context: { params: { id: string } } // <-- 3. Ganti cara menerima 'params'
+    request: NextRequest, // Ini sudah benar
+    context: { params: { id: string } } // Ini sudah benar
 ) {
     try {
-        const id = context.params.id // <-- 4. Ambil 'id' dari 'context.params'
+        const id = context.params.id // Ini sudah benar
 
-        // Panggil fungsi untuk menghapus riwayat
         const sukses = await hapusRiwayat(id)
 
         if (!sukses) {
